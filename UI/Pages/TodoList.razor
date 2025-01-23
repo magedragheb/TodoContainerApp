@@ -1,0 +1,68 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<PageTitle>Todo List</PageTitle>
+
+<FluentStack Orientation="Orientation.Vertical">
+    <h2>Todo List</h2>
+
+    <FluentToolbar Style="padding:0px">
+        <FluentTextField Size="40" placeholder="New todo" @bind-Value="NewTodo" />
+        <FluentCheckbox Label="Complete?" @bind-Value="IsComplete" />
+        <FluentButton Appearance="Appearance.Accent" @onclick="AddTodo">Add</FluentButton>
+    </FluentToolbar>
+
+    <table>
+        <tbody>
+            @foreach (var todo in Todos)
+            {
+                <tr>
+                    <td style="width: 325px;">
+                        <h5>@todo.Title</h5>
+                    </td>
+                    @if (todo.IsComplete)
+                    {
+                        <td>
+                            <FluentIcon Value="@(new Icons.Regular.Size24.CheckboxChecked())" Color="@Color.Success" />
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</FluentStack>
+
+@code {
+    private List<Todo> Todos = new();
+    private string? NewTodo;
+    private bool IsComplete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Todos = await Http.GetFromJsonAsync<List<Todo>>("todos") ?? new List<Todo>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task AddTodo()
+    {
+        if (string.IsNullOrWhiteSpace(NewTodo)) return;
+        var todo = new Todo { Title = NewTodo, IsComplete = IsComplete };
+        await Http.PostAsJsonAsync("todos", todo);
+        Todos.Add(todo);
+        NewTodo = "";
+        IsComplete = false;
+    }
+
+    public class Todo
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public bool IsComplete { get; set; }
+    }
+}
