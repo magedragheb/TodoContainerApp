@@ -16,7 +16,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/todocontainerapp/api, ghcr.io/todocontainerapp/ui
+          images: ghcr.io/todocontainerapp
           tags: type=sha
 
       - name: Login to GitHub Container Registry
