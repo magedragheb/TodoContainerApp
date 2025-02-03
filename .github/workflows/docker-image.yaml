@@ -2,17 +2,62 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        project:
+          - { name: Api, dockerfile: Api/Dockerfile }
+          - { name: UI, dockerfile: UI/Dockerfile }
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Api/Dockerfile --tag my-image-name:$(date +%s) | docker build . --file UI/Dockerfile --tag my-image-name:$(date +%s) 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push to GitHub Container Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.project.name }}
+          file: ${{ matrix.project.dockerfile }}
+          push: true
+          tags: ghcr.io/${{ github.repository }}/${{ matrix.project.name }}:$(git rev-parse --short HEAD)
+          labels: |
+            repo=${{ github.repository }}
+            commit=${{ github.sha }}
+            branch=${{ github.ref_name }}
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Api to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ghcr.io/${{ github.repository }}/Api:$(git rev-parse --short HEAD)
+          resourceGroup: CourseEngineTesting
+          containerAppName: todoapi
+
+      - name: Deploy UI to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ghcr.io/${{ github.repository }}/UI:$(git rev-parse --short HEAD)
+          resourceGroup: CourseEngineTesting
+          containerAppName: todoui
