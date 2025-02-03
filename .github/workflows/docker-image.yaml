@@ -37,10 +37,10 @@ jobs:
           file: Dockerfile
           push: true
           tags: ghcr.io/todocontainerappapi:latest
-          labels: |
-            repo=${{ github.repository }}
-            branch=${{ github.ref_name }}
-            commit=${{ github.sha }}
+          # labels: |
+          #   repo=${{ github.repository }}
+          #   branch=${{ github.ref_name }}
+          #   commit=${{ github.sha }}
 
       - name: Build and push UI to GitHub Container Registry
         uses: docker/build-push-action@v6
@@ -49,10 +49,10 @@ jobs:
           file: Dockerfile
           push: true
           tags: ghcr.io/todocontainerappui:latest
-          labels: |
-            repo=${{ github.repository }}
-            branch=${{ github.ref_name }}
-            commit=${{ github.sha }}
+          # labels: |
+          #   repo=${{ github.repository }}
+          #   branch=${{ github.ref_name }}
+          #   commit=${{ github.sha }}
 
       - name: Azure Login
         uses: azure/login@v1
