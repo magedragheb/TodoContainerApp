@@ -20,6 +20,9 @@ jobs:
       #     images: ghcr.io/todocontainerapp/api, ghcr.io/todocontainerapp/ui
       #     tags: type=sha
 
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
