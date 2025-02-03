@@ -33,7 +33,7 @@ jobs:
       - name: Build and push Api to GitHub Container Registry
         uses: docker/build-push-action@v6
         with:
-          context: "{{defaultContext}}:Api"
+          context: "{{defaultContext}}"
           file: Dockerfile
           push: true
           tags: ghcr.io/todocontainerappapi:latest
@@ -45,7 +45,7 @@ jobs:
       - name: Build and push UI to GitHub Container Registry
         uses: docker/build-push-action@v6
         with:
-          context: "{{defaultContext}}:UI"
+          context: "{{defaultContext}}"
           file: Dockerfile
           push: true
           tags: ghcr.io/todocontainerappui:latest
