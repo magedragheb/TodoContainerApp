@@ -35,7 +35,7 @@ jobs:
           context: ${{ matrix.project.name }}
           file: ${{ matrix.project.dockerfile }}
           push: true
-          tags: ghcr.io/${{ github.repository }}/${{ matrix.project.name }}:${{ github.sha }}
+          tags: ghcr.io/todocontainerapp/${{ matrix.project.name }}:${{ github.sha }}
           labels: |
             repo=${{ github.repository }}
             commit=${{ github.sha }}
@@ -51,13 +51,13 @@ jobs:
       - name: Deploy Api to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/${{ github.repository }}/api:${{ github.sha }}
+          imageToDeploy: ghcr.io/todocontainerapp/api:${{ github.sha }}
           resourceGroup: CourseEngineTesting
           containerAppName: todoapi
 
       - name: Deploy UI to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/${{ github.repository }}/ui:${{ github.sha }}
+          imageToDeploy: ghcr.io/todocontainerapp/ui:${{ github.sha }}
           resourceGroup: CourseEngineTesting
           containerAppName: todoui
