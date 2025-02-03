@@ -39,7 +39,7 @@ jobs:
           context: "{{defaultContext}}:Api"
           file: Dockerfile
           push: true
-          tags: ghcr.io/todocontainerapp/api
+          tags: ghcr.io/todocontainerapp/api:latest
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -51,7 +51,7 @@ jobs:
           context: "{{defaultContext}}:UI"
           file: Dockerfile
           push: true
-          tags: ghcr.io/todocontainerapp/ui
+          tags: ghcr.io/todocontainerapp/ui:latest
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
