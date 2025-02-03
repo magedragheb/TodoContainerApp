@@ -16,8 +16,8 @@ jobs:
     strategy:
       matrix:
         project:
-          - { name: Api, dockerfile: Api/Dockerfile }
-          - { name: UI, dockerfile: UI/Dockerfile }
+          - { name: api, dockerfile: Api/Dockerfile }
+          - { name: ui, dockerfile: UI/Dockerfile }
     steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
