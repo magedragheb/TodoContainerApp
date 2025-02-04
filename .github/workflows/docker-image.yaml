@@ -9,17 +9,13 @@ permissions:
   contents: read
   packages: write
 
+env:
+  COMMIT_SHA: $(git rev-parse --short ${{ github.sha }})
+
 jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
-      # - name: Docker meta
-      #   id: meta
-      #   uses: docker/metadata-action@v5
-      #   with:
-      #     images: ghcr.io/todocontainerapp/api, ghcr.io/todocontainerapp/ui
-      #     tags: type=sha
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -36,11 +32,11 @@ jobs:
           context: "{{defaultContext}}:Api"
           file: Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/todoapi:latest
-          # labels: |
-          #   repo=${{ github.repository }}
-          #   branch=${{ github.ref_name }}
-          #   commit=${{ github.sha }}
+          tags: ghcr.io/${{ github.repository }}/api:COMMIT_SHA
+          labels: |
+            repo=${{ github.repository }}
+            branch=${{ github.ref_name }}
+            commit=${{ github.sha }}
 
       - name: Build and push UI to GitHub Container Registry
         uses: docker/build-push-action@v6
@@ -48,11 +44,11 @@ jobs:
           context: "{{defaultContext}}:UI"
           file: Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/todoui:latest
-          # labels: |
-          #   repo=${{ github.repository }}
-          #   branch=${{ github.ref_name }}
-          #   commit=${{ github.sha }}
+          tags: ghcr.io/${{ github.repository }}/ui:COMMIT_SHA
+          labels: |
+            repo=${{ github.repository }}
+            branch=${{ github.ref_name }}
+            commit=${{ github.sha }}
 
       - name: Azure Login
         uses: azure/login@v1
@@ -64,13 +60,13 @@ jobs:
       - name: Deploy Api to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/todocontainerapp/api:latest
+          imageToDeploy: ghcr.io/${{ github.repository }}/api:COMMIT_SHA
           resourceGroup: CourseEngineTesting
           containerAppName: todoapi
 
       - name: Deploy UI to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/todocontainerapp/ui:latest
+          imageToDeploy: ghcr.io/${{ github.repository }}/ui:COMMIT_SHA
           resourceGroup: CourseEngineTesting
           containerAppName: todoui
