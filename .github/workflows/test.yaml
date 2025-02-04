@@ -7,8 +7,8 @@ permissions:
   contents: read
   packages: write
 env:
-  COMMIT_SHA: $(git rev-parse --short ${{ github.sha }})
-  REPO: magedragheb/todocontainerapp
+  # COMMIT_SHA: $(git rev-parse --short ${{ github.sha }})
+  # REPO: magedragheb/todocontainerapp
 jobs:
   AzureLogin:
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
       - name: Set environment variables
         run: |
           echo "REPO=magedragheb/todocontainerapp" >> $GITHUB_ENV
-          echo "COMMIT_SHA=git rev-parse --short ${{ github.sha }}" >> $GITHUB_ENV
+          echo "COMMIT_SHA=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
       - name: checkout
         uses: actions/checkout@v4
       - run: |
