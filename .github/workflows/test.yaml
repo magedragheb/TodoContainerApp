@@ -7,21 +7,25 @@ permissions:
   contents: read
   packages: write
 env:
-  COMMIT_SHA: git rev-parse --short ${{ github.sha }}
+  COMMIT_SHA: $(git rev-parse --short ${{ github.sha }})
   REPO: magedragheb/todocontainerapp
 jobs:
   AzureLogin:
     runs-on: ubuntu-latest
     steps:
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      # - name: Azure Login
+      #   uses: azure/login@v1
+      #   with:
+      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Set environment variables
+        run: |
+          echo "REPO=magedragheb/todocontainerapp" >> $GITHUB_ENV
+          echo "COMMIT_SHA=git rev-parse --short ${{ github.sha }}" >> $GITHUB_ENV
       - name: checkout
         uses: actions/checkout@v4
       - run: |
-          echo "$COMMIT_SHA"
-          echo "$REPO"
-          echo "$REPO/api"
+          echo ${{ env.REPO }}
+          echo ${{ env.REPO }}/api
+          echo ${{ env.COMMIT_SHA }}
