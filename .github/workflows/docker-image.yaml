@@ -10,16 +10,12 @@ permissions:
   packages: write
 
 env:
-  COMMIT_SHA: $(git rev-parse --short ${{ github.sha }})
   REPO: magedragheb/todocontainerapp
 
 jobs:
   docker-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - run: echo => ${{ env.COMMIT_SHA }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -36,7 +32,7 @@ jobs:
           context: "{{defaultContext}}:Api"
           file: Dockerfile
           push: true
-          tags: ghcr.io/${{ env.REPO }}/api:${{ env.COMMIT_SHA }}
+          tags: ghcr.io/${{ env.REPO }}/api:${{ github.sha }}
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -48,7 +44,7 @@ jobs:
           context: "{{defaultContext}}:UI"
           file: Dockerfile
           push: true
-          tags: ghcr.io/${{ env.REPO }}/ui:${{ env.COMMIT_SHA }}
+          tags: ghcr.io/${{ env.REPO }}/ui:${{ github.sha}}
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -64,13 +60,13 @@ jobs:
       - name: Deploy Api to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/${{ env.REPO }}/api:${{ env.COMMIT_SHA }}
+          imageToDeploy: ghcr.io/${{ env.REPO }}/api:${{ github.sha }}
           resourceGroup: CourseEngineTesting
           containerAppName: todoapi
 
       - name: Deploy UI to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/${{ env.REPO }}/ui:${{ env.COMMIT_SHA }}
+          imageToDeploy: ghcr.io/${{ env.REPO }}/ui:${{ github.sha }}
           resourceGroup: CourseEngineTesting
           containerAppName: todoui
