@@ -33,7 +33,7 @@ jobs:
           context: "{{defaultContext}}:Api"
           file: Dockerfile
           push: true
-          tags: ghcr.io/REPO/api:COMMIT_SHA
+          tags: ghcr.io/$REPO/api:$COMMIT_SHA
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -45,7 +45,7 @@ jobs:
           context: "{{defaultContext}}:UI"
           file: Dockerfile
           push: true
-          tags: ghcr.io/REPO/ui:COMMIT_SHA
+          tags: ghcr.io/$REPO/ui:$COMMIT_SHA
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -61,13 +61,13 @@ jobs:
       - name: Deploy Api to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/REPO/api:COMMIT_SHA
+          imageToDeploy: ghcr.io/$REPO/api:$COMMIT_SHA
           resourceGroup: CourseEngineTesting
           containerAppName: todoapi
 
       - name: Deploy UI to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/REPO/ui:COMMIT_SHA
+          imageToDeploy: ghcr.io/$REPO/ui:$COMMIT_SHA
           resourceGroup: CourseEngineTesting
           containerAppName: todoui
