@@ -6,7 +6,7 @@ permissions:
   id-token: write
   contents: read
   packages: write
-env:
+# env:
   # COMMIT_SHA: $(git rev-parse --short ${{ github.sha }})
   # REPO: magedragheb/todocontainerapp
 jobs:
@@ -26,6 +26,5 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - run: |
-          echo ${{ env.REPO }}
-          echo ${{ env.REPO }}/api
-          echo ${{ env.COMMIT_SHA }}
+          echo $GITHUB_ENV.REPO
+          echo $GITHUB_ENV.COMMIT_SHA 
