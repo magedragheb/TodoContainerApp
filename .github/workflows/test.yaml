@@ -6,6 +6,9 @@ permissions:
   id-token: write
   contents: read
   packages: write
+env:
+  COMMIT_SHA: $(git rev-parse --short ${{ github.sha }})
+  REPO: magedragheb/todocontainerapp
 jobs:
   AzureLogin:
     runs-on: ubuntu-latest
@@ -19,5 +22,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - run: |
-          COMMIT_SHA=$(git rev-parse --short ${{ github.sha }})
           echo "COMMIT_SHA=$COMMIT_SHA"
+          echo "REPO=$REPO"
+          echo "$REPO/api"
