@@ -62,6 +62,7 @@ jobs:
         with:
           imageToDeploy: ghcr.io/${{ env.REPO }}/api:latest
           resourceGroup: CourseEngineTesting
+          location: italynorth
           containerAppName: todoapi
 
       - name: Deploy UI to Azure Container Apps
@@ -69,4 +70,5 @@ jobs:
         with:
           imageToDeploy: ghcr.io/${{ env.REPO }}/ui:latest
           resourceGroup: CourseEngineTesting
+          location: italynorth
           containerAppName: todoui
