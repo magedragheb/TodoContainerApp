@@ -61,6 +61,8 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ghcr.io/${{ env.REPO }}/api:latest
+          registryUsername: ${{ github.repository_owner }}
+          registryPassword: ${{ secrets.GHTOKEN }}
           resourceGroup: CourseEngineTesting
           location: italynorth
           containerAppName: todoapi
@@ -69,6 +71,8 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ghcr.io/${{ env.REPO }}/ui:latest
+          registryUsername: ${{ github.repository_owner }}
+          registryPassword: ${{ secrets.GHTOKEN }}
           resourceGroup: CourseEngineTesting
           location: italynorth
           containerAppName: todoui
