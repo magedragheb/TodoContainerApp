@@ -7,7 +7,6 @@ permissions:
   contents: read
   packages: write
 env:
-  commit-sha: $(git rev-parse --short ${{ github.sha }})
   repo: todocontainerapp
   registry: todocontainer.azurecr.io
 jobs:
@@ -34,7 +33,7 @@ jobs:
           context: "{{defaultContext}}:Api"
           file: Dockerfile
           push: true
-          tags: ${{ env.registry }}/${{ env.repo }}/api:${{ env.commit-sha }}
+          tags: ${{ env.registry }}/${{ env.repo }}/api:${{ github.sha }}
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -52,7 +51,7 @@ jobs:
           context: "{{defaultContext}}:UI"
           file: Dockerfile
           push: true
-          tags: ${{ env.registry }}/${{ env.repo }}/ui:${{ env.commit-sha }}
+          tags: ${{ env.registry }}/${{ env.repo }}/ui:${{ github.sha }}
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -65,7 +64,7 @@ jobs:
       - name: Deploy Api to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ${{ env.registry }}/${{ env.repo }}/api:${{ env.commit-sha }}
+          imageToDeploy: ${{ env.registry }}/${{ env.repo }}/api:${{ github.sha }}
           resourceGroup: CourseEngineTesting
           location: italynorth
           containerAppName: todoapi
@@ -77,7 +76,7 @@ jobs:
       - name: Deploy UI to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ${{ env.registry }}/${{ env.repo }}/ui:${{ env.commit-sha }}
+          imageToDeploy: ${{ env.registry }}/${{ env.repo }}/ui:${{ github.sha }}
           resourceGroup: CourseEngineTesting
           location: italynorth
           containerAppName: todoui
