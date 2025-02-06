@@ -61,6 +61,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ghcr.io/${{ env.REPO }}/api:latest
+          registryUrl: ghcr.io
           registryUsername: ${{ github.repository_owner }}
           registryPassword: ${{ secrets.GHTOKEN }}
           resourceGroup: CourseEngineTesting
@@ -71,6 +72,7 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           imageToDeploy: ghcr.io/${{ env.REPO }}/ui:latest
+          registryUrl: ghcr.io
           registryUsername: ${{ github.repository_owner }}
           registryPassword: ${{ secrets.GHTOKEN }}
           resourceGroup: CourseEngineTesting
