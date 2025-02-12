@@ -9,7 +9,7 @@ permissions:
 env:
   repo: magedragheb/todocontainerapp
 jobs:
-  Login-Github-Azure:
+  DockerBuild-GHContainerReg-DeployAzureContainerApps:
     runs-on: ubuntu-latest
     steps:
       - name: Login to GitHub Container Registry
