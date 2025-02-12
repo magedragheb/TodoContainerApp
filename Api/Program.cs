@@ -2,15 +2,17 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContextPool<TodoDbContext>(
-    options => options.UseSqlServer(
-        builder.Configuration["ConnectionString"]
-        ));
+
+builder.Services.AddDbContextPool<TodoDbContext>(options =>
+    options.UseSqlServer(builder.Configuration["connectionstring"]));
+
 builder.Services.AddOpenApi();
-builder.Services.AddCors(options => options.AddDefaultPolicy(
-    builder => builder.AllowAnyHeader()
-    .AllowAnyMethod()
-    .WithOrigins("https://localhost:5000")
+
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(p =>
+        p.AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithOrigins(builder.Configuration["FrontURL"]!)
 ));
 
 var app = builder.Build();
@@ -22,11 +24,22 @@ app.UseCors();
 app.UseExceptionHandler(e => e.Run(async context =>
         await TypedResults.Problem().ExecuteAsync(context)));
 
-app.MapGet("/", () => "Alive!");
+app.MapGet("/", (IConfiguration config) =>
+{
+    var response = new Dictionary<string, string>();
+    foreach (var item in config.AsEnumerable())
+    {
+        if (item.Value != null)
+        {
+            response.Add(item.Key, item.Value);
+        }
+    }
+    return TypedResults.Ok(response);
+});
 app.MapGet("/todos", async (TodoDbContext db) => await db.Todos.ToListAsync());
 app.MapPost("/todos", async (Todo todo, TodoDbContext db) =>
 {
-    todo.UserEmail = "";
+    todo.UserEmail = "mail@mail.com";
     await db.Todos.AddAsync(todo);
     await db.SaveChangesAsync();
     return TypedResults.Created($"/todos/{todo.Id}", todo);
