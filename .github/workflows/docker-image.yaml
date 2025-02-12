@@ -24,10 +24,6 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  BuildImages:
-    runs-on: ubuntu-latest
-    needs: Login-Github-Azure
-    steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build and push Api to GitHub Container Registry
@@ -52,10 +48,6 @@ jobs:
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
             commit=${{ github.sha }}
-  DeployToAzure:
-    runs-on: ubuntu-latest
-    needs: BuildImages
-    steps:
       - name: Deploy Api to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
@@ -76,68 +68,3 @@ jobs:
           resourceGroup: CourseEngineTesting
           location: italynorth
           containerAppName: todoui
-  # docker-build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Login to GitHub Container Registry
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: ${{ github.repository_owner }}
-  #         password: ${{ secrets.GHTOKEN }}
-
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-
-  #     - name: Build and push Api to GitHub Container Registry
-  #       uses: docker/build-push-action@v6
-  #       with:
-  #         context: "{{defaultContext}}:Api"
-  #         file: Dockerfile
-  #         push: true
-  #         tags: ghcr.io/${{ env.REPO }}/api:latest
-  #         labels: |
-  #           repo=${{ github.repository }}
-  #           branch=${{ github.ref_name }}
-  #           commit=${{ github.sha }}
-
-  #     - name: Build and push UI to GitHub Container Registry
-  #       uses: docker/build-push-action@v6
-  #       with:
-  #         context: "{{defaultContext}}:UI"
-  #         file: Dockerfile
-  #         push: true
-  #         tags: ghcr.io/${{ env.REPO }}/ui:latest
-  #         labels: |
-  #           repo=${{ github.repository }}
-  #           branch=${{ github.ref_name }}
-  #           commit=${{ github.sha }}
-
-  #     - name: Azure Login
-  #       uses: azure/login@v1
-  #       with:
-  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
-  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-  #     - name: Deploy Api to Azure Container Apps
-  #       uses: azure/container-apps-deploy-action@v1
-  #       with:
-  #         imageToDeploy: ghcr.io/${{ env.REPO }}/api:latest
-  #         registryUrl: ghcr.io
-  #         registryUsername: ${{ github.repository_owner }}
-  #         registryPassword: ${{ secrets.GHTOKEN }}
-  #         resourceGroup: CourseEngineTesting
-  #         location: italynorth
-  #         containerAppName: todoapi
-
-  #     - name: Deploy UI to Azure Container Apps
-  #       uses: azure/container-apps-deploy-action@v1
-  #       with:
-  #         imageToDeploy: ghcr.io/${{ env.REPO }}/ui:latest
-  #         registryUrl: ghcr.io
-  #         registryUsername: ${{ github.repository_owner }}
-  #         registryPassword: ${{ secrets.GHTOKEN }}
-  #         resourceGroup: CourseEngineTesting
-  #         location: italynorth
-  #         containerAppName: todoui
