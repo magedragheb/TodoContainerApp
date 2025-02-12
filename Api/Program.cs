@@ -1,30 +1,26 @@
-using Azure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var vaultUrl = "https://courseenginetesting.vault.azure.net/";
-builder.Configuration.AddAzureKeyVault(new Uri(vaultUrl), new DefaultAzureCredential());
-
 builder.Services.AddDbContextPool<TodoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration["AZURE_SQL_CONNECTIONSTRING"]));
+    options.UseSqlServer(builder.Configuration["connectionkv"]));
 
 builder.Services.AddOpenApi();
 
-// builder.Services.AddCors(options =>
-//     options.AddDefaultPolicy(p =>
-//         p.AllowAnyHeader()
-//         .AllowAnyMethod()
-//         .WithOrigins(builder.Configuration["FrontURL"]!)
-// ));
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(p =>
+        p.AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithOrigins(builder.Configuration["fronturl"]!)
+));
 
 var app = builder.Build();
 
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseHttpsRedirection();
-// app.UseCors();
+app.UseCors();
 app.UseExceptionHandler(e => e.Run(async context =>
         await TypedResults.Problem().ExecuteAsync(context)));
 
