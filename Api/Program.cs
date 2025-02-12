@@ -3,17 +3,17 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContextPool<TodoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration["connectionstring"]));
+// builder.Services.AddDbContextPool<TodoDbContext>(options =>
+//     options.UseSqlServer(builder.Configuration["connectionstring"]));
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddCors(options =>
-    options.AddDefaultPolicy(p =>
-        p.AllowAnyHeader()
-        .AllowAnyMethod()
-        .WithOrigins(builder.Configuration["FrontURL"]!)
-));
+// builder.Services.AddCors(options =>
+//     options.AddDefaultPolicy(p =>
+//         p.AllowAnyHeader()
+//         .AllowAnyMethod()
+//         .WithOrigins(builder.Configuration["FrontURL"]!)
+// ));
 
 var app = builder.Build();
 
@@ -33,14 +33,14 @@ app.MapGet("/", (IConfiguration config) =>
     }
     return TypedResults.Ok(response);
 });
-app.MapGet("/todos", async (TodoDbContext db) => await db.Todos.ToListAsync());
-app.MapPost("/todos", async (Todo todo, TodoDbContext db) =>
-{
-    todo.UserEmail = "mail@mail.com";
-    await db.Todos.AddAsync(todo);
-    await db.SaveChangesAsync();
-    return TypedResults.Created($"/todos/{todo.Id}", todo);
-});
+// app.MapGet("/todos", async (TodoDbContext db) => await db.Todos.ToListAsync());
+// app.MapPost("/todos", async (Todo todo, TodoDbContext db) =>
+// {
+//     todo.UserEmail = "mail@mail.com";
+//     await db.Todos.AddAsync(todo);
+//     await db.SaveChangesAsync();
+//     return TypedResults.Created($"/todos/{todo.Id}", todo);
+// });
 
 app.Run();
 class TodoDbContext(DbContextOptions<TodoDbContext> options) : DbContext(options)
