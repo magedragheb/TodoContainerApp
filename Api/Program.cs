@@ -4,7 +4,7 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextPool<TodoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration["connectionstring"]));
+    options.UseSqlServer(builder.Configuration["AZURE_SQL_CONNECTIONSTRING"]));
 
 builder.Services.AddOpenApi();
 
