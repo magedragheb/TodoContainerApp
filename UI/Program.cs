@@ -7,7 +7,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7155") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://todoapi.proudglacier-5cb79eea.italynorth.azurecontainerapps.io") });
 builder.Services.AddFluentUIComponents();
 
 await builder.Build().RunAsync();
