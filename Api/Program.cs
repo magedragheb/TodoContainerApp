@@ -20,7 +20,7 @@ var app = builder.Build();
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseHttpsRedirection();
-app.UseCors();
+// app.UseCors();
 app.UseExceptionHandler(e => e.Run(async context =>
         await TypedResults.Problem().ExecuteAsync(context)));
 
@@ -33,14 +33,14 @@ app.MapGet("/", (IConfiguration config) =>
     }
     return TypedResults.Ok(response);
 });
-// app.MapGet("/todos", async (TodoDbContext db) => await db.Todos.ToListAsync());
-// app.MapPost("/todos", async (Todo todo, TodoDbContext db) =>
-// {
-//     todo.UserEmail = "mail@mail.com";
-//     await db.Todos.AddAsync(todo);
-//     await db.SaveChangesAsync();
-//     return TypedResults.Created($"/todos/{todo.Id}", todo);
-// });
+app.MapGet("/todos", async (TodoDbContext db) => await db.Todos.ToListAsync());
+app.MapPost("/todos", async (Todo todo, TodoDbContext db) =>
+{
+    todo.UserEmail = "mail@mail.com";
+    await db.Todos.AddAsync(todo);
+    await db.SaveChangesAsync();
+    return TypedResults.Created($"/todos/{todo.Id}", todo);
+});
 
 app.Run();
 class TodoDbContext(DbContextOptions<TodoDbContext> options) : DbContext(options)
