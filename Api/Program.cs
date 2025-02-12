@@ -29,10 +29,7 @@ app.MapGet("/", (IConfiguration config) =>
     var response = new Dictionary<string, string>();
     foreach (var item in config.AsEnumerable())
     {
-        if (item.Value != null)
-        {
-            response.Add(item.Key, item.Value);
-        }
+        response.Add(item.Key, item.Value ?? "null");
     }
     return TypedResults.Ok(response);
 });
