@@ -1,11 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
 <FluentLayout>
-    <FluentHeader>
-        UI
-    </FluentHeader>
+    <AuthorizeView>
+        <FluentHeader>
+            <FluentStack HorizontalAlignment="@HorizontalAlignment.Start">
+                TestUI
+            </FluentStack>
+            <ProfileDisplay />
+        </FluentHeader>
+    </AuthorizeView>
     <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
-        <NavMenu />
+        <AuthorizeView>
+            <NavMenu />
+        </AuthorizeView>
         <FluentBodyContent Class="body-content">
             <ErrorBoundary>
                 <ChildContent>
@@ -19,8 +26,4 @@
             </ErrorBoundary>
         </FluentBodyContent>
     </FluentStack>
-    <FluentFooter>
-        <a href="https://www.fluentui-blazor.net" target="_blank">Documentation and demos</a>
-        <FluentSpacer />
-    </FluentFooter>
 </FluentLayout>

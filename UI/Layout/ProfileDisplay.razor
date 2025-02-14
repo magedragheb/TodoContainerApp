@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthState
+
+<AuthorizeView>
+    <Authorized>
+        <FluentProfileMenu Image="favicon.ico" HorizontalAlignment="@HorizontalAlignment.End" HeaderLabel="Company" OnHeaderButtonClick="BeginLogOut" OnFooterLinkClick="BeginLogOut"
+            FullName="@Name" EMail="@Email" PopoverStyle="min-width: 330px;">
+            
+        </FluentProfileMenu>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private string? Name;
+    private string? Email;
+    @* private byte[]? Image; *@
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            Name = user.Identity.Name;
+            Email = user.Identity.Name;
+        }
+    }
+    public void BeginLogOut()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
+    }
+}
