@@ -2,7 +2,7 @@ name: Azure SWA Build and Publish
 on:
   push:
     branches:
-      - main
+      - "?"
 jobs:
   SWA-Build-Publish:
     runs-on: ubuntu-latest

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Scalar.AspNetCore;
@@ -6,13 +7,13 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContextPool<TodoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration["connectionkv"]));
+    options.UseSqlServer(builder.Configuration["connection"]));
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("EntraId"));
-builder.Services.AddAuthorization();
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("EntraId"));
+// builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(p =>
@@ -27,30 +28,37 @@ app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseHttpsRedirection();
 app.UseCors();
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 app.UseExceptionHandler(e => e.Run(async context =>
         await TypedResults.Problem().ExecuteAsync(context)));
 
-app.MapGet("/", (IConfiguration config) =>
+app.MapGet("/", async (IConfiguration config, TodoDbContext db) =>
 {
-    var response = new Dictionary<string, string>();
-    foreach (var item in config.AsEnumerable())
+    var databaseStatus = await db.Database.CanConnectAsync() ? "Connected" : "Disconnected";
+
+    return TypedResults.Ok(new
     {
-        response.Add(item.Key, item.Value ?? "null");
-    }
-    return TypedResults.Ok(response);
-}).RequireAuthorization();
-app.MapGet("/todos", async (TodoDbContext db) => await db.Todos.ToListAsync()).RequireAuthorization();
+        Status = databaseStatus,
+        Timestamp = DateTime.UtcNow
+    });
+});
+
+app.MapGet("/todos", async (TodoDbContext db) =>
+{ 
+    var todos = await db.Todos.ToListAsync();
+    return TypedResults.Ok(todos);
+});
+
 app.MapPost("/todos", async (Todo todo, TodoDbContext db) =>
 {
-    todo.UserEmail = "mail@mail.com";
     await db.Todos.AddAsync(todo);
     await db.SaveChangesAsync();
     return TypedResults.Created($"/todos/{todo.Id}", todo);
-}).RequireAuthorization();
+});
 
 app.Run();
+
 class TodoDbContext(DbContextOptions<TodoDbContext> options) : DbContext(options)
 {
     public DbSet<Todo> Todos => Set<Todo>();

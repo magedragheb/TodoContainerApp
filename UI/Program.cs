@@ -8,10 +8,10 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddHttpClient("BackendAPI", client => client.BaseAddress = new Uri("https://todoapi.proudglacier-5cb79eea.italynorth.azurecontainerapps.io"))
+builder.Services.AddHttpClient("BackendAPI", client => client.BaseAddress = new Uri("https://localhost:7155"))
 .AddHttpMessageHandler(sp =>
     sp.GetRequiredService<AuthorizationMessageHandler>()
-    .ConfigureHandler(authorizedUrls: ["https://todoapi.proudglacier-5cb79eea.italynorth.azurecontainerapps.io"],
+    .ConfigureHandler(authorizedUrls: ["https://localhost:7155"],
     scopes: ["api://c44fd22d-6a8e-4cbd-9e7d-f936295ce070/API.Access"]));
 
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BackendAPI"));

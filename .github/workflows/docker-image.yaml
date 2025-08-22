@@ -19,7 +19,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHTOKEN }}
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -40,10 +40,10 @@ jobs:
       - name: Build and push UI to GitHub Container Registry
         uses: docker/build-push-action@v6
         with:
-          context: "{{defaultContext}}:UI"
+          context: "{{defaultContext}}:TodoBlazorServer"
           file: Dockerfile
           push: true
-          tags: ghcr.io/${{ env.repo }}/ui:${{ github.sha }}
+          tags: ghcr.io/${{ env.repo }}/uiserver:${{ github.sha }}
           labels: |
             repo=${{ github.repository }}
             branch=${{ github.ref_name }}
@@ -56,15 +56,21 @@ jobs:
           registryUsername: ${{ github.repository_owner }}
           registryPassword: ${{ secrets.GHTOKEN }}
           resourceGroup: CourseEngineTesting
-          location: italynorth
+          location: switzerlandnorth
+          containerAppEnvironment: todoapp-env
           containerAppName: todoapi
+          runtimeStack: "dotnet"
+          targetPort: 8080
       - name: Deploy UI to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: ghcr.io/${{ env.repo }}/ui:${{ github.sha }}
+          imageToDeploy: ghcr.io/${{ env.repo }}/uiserver:${{ github.sha }}
           registryUrl: ghcr.io
           registryUsername: ${{ github.repository_owner }}
           registryPassword: ${{ secrets.GHTOKEN }}
           resourceGroup: CourseEngineTesting
-          location: italynorth
+          location: switzerlandnorth
+          containerAppEnvironment: todoapp-env
           containerAppName: todoui
+          runtimeStack: "dotnet"
+          targetPort: 8080
