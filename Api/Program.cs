@@ -33,7 +33,18 @@ app.UseCors();
 app.UseExceptionHandler(e => e.Run(async context =>
         await TypedResults.Problem().ExecuteAsync(context)));
 
-app.MapGet("/", async (IConfiguration config, TodoDbContext db) =>
+app.MapGet("/", (IConfiguration config) =>
+{
+    return TypedResults.Ok(new
+    {
+        Environment = config["ASPNETCORE_ENVIRONMENT"],
+        AppName = config["appname"],
+        FrontUrl = config["fronturl"],
+        ConnectionString = config["connection"],
+    });
+});
+
+app.MapGet("/db", async (IConfiguration config, TodoDbContext db) =>
 {
     var databaseStatus = await db.Database.CanConnectAsync() ? "Connected" : "Disconnected";
 
