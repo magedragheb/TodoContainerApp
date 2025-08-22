@@ -59,8 +59,6 @@ jobs:
           location: switzerlandnorth
           containerAppEnvironment: todoapp-env
           containerAppName: todoapi
-          runtimeStack: "dotnet"
-          targetPort: 8080
       - name: Deploy UI to Azure Container Apps
         uses: azure/container-apps-deploy-action@v1
         with:
@@ -72,5 +70,3 @@ jobs:
           location: switzerlandnorth
           containerAppEnvironment: todoapp-env
           containerAppName: todoui
-          runtimeStack: "dotnet"
-          targetPort: 8080
