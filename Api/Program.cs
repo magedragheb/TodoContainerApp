@@ -1,3 +1,5 @@
+using Api.DbInterceptor;
+using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -5,9 +7,14 @@ using Microsoft.Identity.Web;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton<AzureSqlAuthInterceptor>();
 
-builder.Services.AddDbContextPool<TodoDbContext>(options =>
-    options.UseSqlServer(builder.Configuration["connection"]));
+builder.Services.AddDbContextPool<TodoDbContext>((sp, options) =>
+{
+    var connStr = builder.Configuration["connection"];
+    options.UseSqlServer(connStr);
+    options.AddInterceptors(sp.GetRequiredService<AzureSqlAuthInterceptor>());
+});
 
 builder.Services.AddOpenApi();
 
